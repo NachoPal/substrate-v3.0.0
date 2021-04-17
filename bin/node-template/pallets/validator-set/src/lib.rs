@@ -34,7 +34,7 @@ pub mod pallet {
 	// The pallet's runtime storage items.
 	#[pallet::storage]
 	#[pallet::getter(fn validators)]
-	pub type Validators<T: Config> =  StorageValue<_, Vec<T::AccountId>, ValueQuery>;
+	pub type Validators<T: Config> =  StorageValue<_, Vec<T::AccountId>>;
 
 	#[pallet::storage]
 	#[pallet::getter(fn flag)]
@@ -88,11 +88,12 @@ pub mod pallet {
 		pub fn add_validator(origin: OriginFor<T>, validator_id: T::AccountId) -> DispatchResultWithPostInfo {
 			ensure_root(origin)?;
 
-			let mut validators: Vec<T::AccountId> = <Validators<T>>::get();
+			let mut validators: Vec<T::AccountId>;
 
-			if validators.is_empty() {
+			if <Validators<T>>::get().is_none() {
 				validators = vec![validator_id.clone()];
 			} else {
+				validators = <Validators<T>>::get().unwrap();
 				validators.push(validator_id.clone());
 			}
 
@@ -111,11 +112,7 @@ pub mod pallet {
 		#[pallet::weight(0)]
 		pub fn remove_validator(origin: OriginFor<T>, validator_id: T::AccountId) -> DispatchResultWithPostInfo {
 			ensure_root(origin)?;
-			let mut validators = <Validators<T>>::get();
-
-			if validators.is_empty() {
-				return Err(Error::<T>::NoValidators)
-			}
+			let mut validators = <Validators<T>>::get().ok_or(Error::<T>::NoValidators)?;
 
 			// Assuming that this will be a PoA network for enterprise use-cases,
 			// the validator count may not be too big; the for loop shouldn't be too heavy.
@@ -148,7 +145,7 @@ pub mod pallet {
 impl<T: Config> Pallet<T> {
 	fn initialize_validators(validators: &[T::AccountId]) {
 			if !validators.is_empty() {
-				assert!(<Validators<T>>::get().is_empty(), "Validators are already initialized!");
+				assert!(<Validators<T>>::get().is_none(), "Validators are already initialized!");
 				<Validators<T>>::put(validators);
 			}
 	}
