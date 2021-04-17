@@ -13,6 +13,7 @@ targets = ["x86_64-unknown-linux-gnu"]
 [dependencies]
 codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false, features = ["derive"] }
 
+validatorset = { version = "3.0.0", package = "validator-set", path = "../pallets/validator-set", default-features = false }
 pallet-aura = { version = "3.0.0", default-features = false, path = "../../../frame/aura" }
 pallet-balances = { version = "3.0.0", default-features = false, path = "../../../frame/balances" }
 frame-support = { version = "3.0.0", default-features = false, path = "../../../frame/support" }
@@ -79,6 +80,7 @@ std = [
 	"frame-system/std",
 	"frame-system-rpc-runtime-api/std",
 	"template/std",
+	'validatorset/std',
 ]
 runtime-benchmarks = [
 	"sp-runtime/runtime-benchmarks",

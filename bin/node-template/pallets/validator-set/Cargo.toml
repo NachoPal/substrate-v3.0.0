@@ -1,0 +1,32 @@
+[package]
+name = "validator-set"
+version = "3.0.0"
+authors = ["gautamdhameja"]
+edition = "2018"
+
+[dependencies]
+sp-std = { default-features = false, version = '3.0.0', path = "../../../../primitives/std"}
+sp-runtime = { default-features = false, version = '3.0.0', path = "../../../../primitives/runtime" }
+sp-io = { default-features = false, version = '3.0.0', path = "../../../../primitives/io" }
+sp-core = { default-features = false, version = '3.0.0', path = "../../../../primitives/core" }
+frame-support = { default-features = false, version = '3.0.0', path = "../../../../frame/support" }
+frame-system = { default-features = false, version = '3.0.0', path = "../../../../frame/system" }
+pallet-session = { default-features = false, version = '3.0.0', path = "../../../../frame/session" }
+serde = { features = ['derive'], optional = true, version = '1.0.101'}
+codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false, features = ["derive"] }
+
+[features]
+default = ['std']
+std = [
+    'codec/std',
+    'sp-std/std',
+    'sp-runtime/std',
+    'frame-support/std',
+    'sp-core/std',
+    'sp-io/std',
+    'serde',
+    'frame-system/std',
+    'pallet-session/std'
+]
+
+

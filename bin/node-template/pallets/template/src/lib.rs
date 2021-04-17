@@ -46,7 +46,7 @@ pub mod pallet {
 		/// parameters. [something, who]
 		SomethingStored(u32, T::AccountId),
 	}
-	
+
 	// Errors inform users that something went wrong.
 	#[pallet::error]
 	pub enum Error<T> {
