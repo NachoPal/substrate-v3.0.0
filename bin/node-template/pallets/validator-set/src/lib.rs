@@ -97,7 +97,6 @@ pub mod pallet {
 				validators.push(validator_id.clone());
 			}
 
-			validators.push(validator_id.clone());
 			<Validators<T>>::put(validators);
 
 			// Calling rotate_session to queue the new session keys.

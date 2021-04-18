@@ -4124,6 +4124,7 @@ dependencies = [
 name = "node-template"
 version = "2.0.0"
 dependencies = [
+ "bs58",
  "frame-benchmarking",
  "frame-benchmarking-cli",
  "jsonrpc-core",
@@ -4171,6 +4172,7 @@ dependencies = [
  "pallet-aura",
  "pallet-balances",
  "pallet-grandpa",
+ "pallet-node-authorization",
  "pallet-randomness-collective-flip",
  "pallet-session",
  "pallet-sudo",

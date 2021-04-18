@@ -13,6 +13,7 @@ targets = ["x86_64-unknown-linux-gnu"]
 [dependencies]
 codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false, features = ["derive"] }
 
+pallet-node-authorization = { default-features = false, version = "2.0.0", path = "../../../frame/node-authorization" }
 pallet-session = { version = "3.0.0", path = "../../../frame/session", default-features = false }
 validatorset = { version = "3.0.0", package = "validator-set", path = "../pallets/validator-set", default-features = false }
 pallet-aura = { version = "3.0.0", default-features = false, path = "../../../frame/aura" }
@@ -82,6 +83,7 @@ std = [
 	"frame-system-rpc-runtime-api/std",
 	"template/std",
 	'validatorset/std',
+	'pallet-node-authorization/std',
 ]
 runtime-benchmarks = [
 	"sp-runtime/runtime-benchmarks",
