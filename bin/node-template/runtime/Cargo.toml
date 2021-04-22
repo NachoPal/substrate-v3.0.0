@@ -16,6 +16,7 @@ codec = { package = "parity-scale-codec", version = "2.0.0", default-features = 
 pallet-node-authorization = { default-features = false, version = "2.0.0", path = "../../../frame/node-authorization" }
 pallet-session = { version = "3.0.0", path = "../../../frame/session", default-features = false }
 validatorset = { version = "3.0.0", package = "validator-set", path = "../pallets/validator-set", default-features = false }
+accountset = { version = "3.0.0", package = 'account-set', path = "../pallets/account-set", default-features = false }
 pallet-aura = { version = "3.0.0", default-features = false, path = "../../../frame/aura" }
 pallet-balances = { version = "3.0.0", default-features = false, path = "../../../frame/balances" }
 frame-support = { version = "3.0.0", default-features = false, path = "../../../frame/support" }
