@@ -84,6 +84,7 @@ std = [
 	"frame-system-rpc-runtime-api/std",
 	"template/std",
 	'validatorset/std',
+	'accountset/std',
 	'pallet-node-authorization/std',
 ]
 runtime-benchmarks = [
