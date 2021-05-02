@@ -17,6 +17,8 @@ pallet-node-authorization = { default-features = false, version = "2.0.0", path 
 pallet-session = { version = "3.0.0", path = "../../../frame/session", default-features = false }
 validatorset = { version = "3.0.0", package = "validator-set", path = "../pallets/validator-set", default-features = false }
 accountset = { version = "3.0.0", package = 'account-set', path = "../pallets/account-set", default-features = false }
+private-channels = { version = "3.0.0", package = 'private-channels', path = "../pallets/private-channels", default-features = false }
+private-channels-2 = { version = "3.0.0", package = 'private-channels-2', path = "../pallets/private-channels-2", default-features = false }
 pallet-aura = { version = "3.0.0", default-features = false, path = "../../../frame/aura" }
 pallet-balances = { version = "3.0.0", default-features = false, path = "../../../frame/balances" }
 frame-support = { version = "3.0.0", default-features = false, path = "../../../frame/support" }
@@ -85,6 +87,8 @@ std = [
 	"template/std",
 	'validatorset/std',
 	'accountset/std',
+	'private-channels/std',
+	'private-channels-2/std',
 	'pallet-node-authorization/std',
 ]
 runtime-benchmarks = [

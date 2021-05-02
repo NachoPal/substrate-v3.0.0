@@ -2,10 +2,13 @@ use sp_core::{Pair, Public, sr25519, OpaquePeerId};
 use node_template_runtime::{
 	AccountId, AuraConfig, BalancesConfig, GenesisConfig, GrandpaConfig,
 	SudoConfig, SystemConfig, WASM_BINARY, Signature, ValidatorSetConfig,
-	SessionConfig, opaque::SessionKeys, NodeAuthorizationConfig, AccountSetConfig
+	SessionConfig, opaque::SessionKeys, NodeAuthorizationConfig, AccountSetConfig,
+	PrivateChannelsConfig, PrivateChannels2Config
 };
 use sp_consensus_aura::sr25519::AuthorityId as AuraId;
 use sp_finality_grandpa::AuthorityId as GrandpaId;
+use private_channels::ed25519::{AuthorityId as PrivateChannelsId};
+use private_channels_2::ed25519::{AuthorityId as PrivateChannelsId2};
 use sp_runtime::traits::{Verify, IdentifyAccount};
 use sc_service::ChainType;
 
@@ -185,7 +188,34 @@ fn testnet_genesis(
 		accountset: Some(AccountSetConfig {
 			allowed_accounts: vec![
 				(get_account_id_from_seed::<sr25519::Public>("Alice"), ()),
-				(get_account_id_from_seed::<sr25519::Public>("Bob"), ())],
+				(get_account_id_from_seed::<sr25519::Public>("Bob"), ()),
+				(get_account_id_from_seed::<sr25519::Public>("Charlie"), ()),
+				(get_account_id_from_seed::<sr25519::Public>("Dave"), ()),
+				(get_account_id_from_seed::<sr25519::Public>("Ferdie"), ())],
 		}),
+		private_channels: Some(PrivateChannelsConfig {
+			channels: vec![
+				(get_from_seed::<PrivateChannelsId>("Alice"), vec![
+					get_account_id_from_seed::<sr25519::Public>("Charlie"),
+					get_account_id_from_seed::<sr25519::Public>("Dave")
+				]),
+				(get_from_seed::<PrivateChannelsId>("Bob"), vec![
+					get_account_id_from_seed::<sr25519::Public>("Eve"),
+					get_account_id_from_seed::<sr25519::Public>("Ferdie")
+				]),
+			]
+		}),
+		private_channels_2: Some(PrivateChannels2Config {
+			channels: vec![
+				(get_from_seed::<PrivateChannelsId2>("Alice"), vec![
+					get_account_id_from_seed::<sr25519::Public>("Charlie"),
+					get_account_id_from_seed::<sr25519::Public>("Dave")
+				]),
+				(get_from_seed::<PrivateChannelsId2>("Bob"), vec![
+					get_account_id_from_seed::<sr25519::Public>("Eve"),
+					get_account_id_from_seed::<sr25519::Public>("Ferdie")
+				]),
+			]
+		})
 	}
 }

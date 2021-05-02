@@ -21,6 +21,8 @@ use pallet_grandpa::{AuthorityId as GrandpaId, AuthorityList as GrandpaAuthority
 use pallet_grandpa::fg_primitives;
 use sp_version::RuntimeVersion;
 use pallet_session;
+use private_channels::ed25519::{AuthorityId as PrivateChannelsId};
+use private_channels_2::ed25519::{AuthorityId as PrivateChannelsId2};
 use frame_system::EnsureRoot;
 #[cfg(feature = "std")]
 use sp_version::NativeVersion;
@@ -302,6 +304,18 @@ impl accountset::Config for Runtime {
     type Event = Event;
 }
 
+impl private_channels::Config for Runtime {
+	type Event = Event;
+	type AuthorityId = PrivateChannelsId;
+	type Call = Call;
+}
+
+impl private_channels_2::Config for Runtime {
+	type Event = Event;
+	type AuthorityId = PrivateChannelsId2;
+	type Call = Call;
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
 	pub enum Runtime where
@@ -323,6 +337,8 @@ construct_runtime!(
 		TemplateModule: template::{Module, Call, Storage, Event<T>},
 		NodeAuthorization: pallet_node_authorization::{Module, Call, Storage, Event<T>, Config<T>},
 		AccountSet: accountset::{Module, Call, Storage, Event<T>, Config<T>},
+		PrivateChannels: private_channels::{Module, Event<T>, Call, Storage, Config<T>},
+		PrivateChannels2: private_channels_2::{Module, Event<T>, Call, Storage, Config<T>}
 	}
 );
 

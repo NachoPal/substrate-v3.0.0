@@ -4145,6 +4145,8 @@ dependencies = [
  "jsonrpc-core",
  "node-template-runtime",
  "pallet-transaction-payment-rpc",
+ "private-channels",
+ "private-channels-2",
  "sc-basic-authorship",
  "sc-cli",
  "sc-client-api",
@@ -4197,6 +4199,8 @@ dependencies = [
  "pallet-transaction-payment",
  "pallet-transaction-payment-rpc-runtime-api",
  "parity-scale-codec",
+ "private-channels",
+ "private-channels-2",
  "serde",
  "sp-api",
  "sp-block-builder",
@@ -5882,6 +5886,41 @@ dependencies = [
  "impl-codec",
  "impl-serde",
  "uint",
+]
+
+[[package]]
+name = "private-channels"
+version = "3.0.0"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "hex",
+ "log",
+ "parity-scale-codec",
+ "serde",
+ "serde_bytes",
+ "serde_json",
+ "sp-application-crypto",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
+]
+
+[[package]]
+name = "private-channels-2"
+version = "3.0.0"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "log",
+ "parity-scale-codec",
+ "serde",
+ "sp-application-crypto",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
 ]
 
 [[package]]
@@ -7933,6 +7972,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "serde_bytes"
+version = "0.11.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "16ae07dd2f88a366f15bd0632ba725227018c69a1c8550a927324f8eb8368bb9"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "serde_cbor"
 version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7955,9 +8003,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.61"
+version = "1.0.64"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4fceb2595057b6891a4ee808f70054bd2d12f0e97f1cbb78689b59f676df325a"
+checksum = "799e97dc9fdae36a5c8b8f2cae9ce2ee9fdce2058c57a93e6099d919fd982f79"
 dependencies = [
  "itoa",
  "ryu",
