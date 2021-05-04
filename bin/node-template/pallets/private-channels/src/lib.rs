@@ -33,7 +33,7 @@ use sp_io::hashing::{twox_128, blake2_256, blake2_128};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use serde_json::json;
 // use sodiumoxide::crypto::box_::{Nonce};
-
+pub const HEAP_PAGES: &'static [u8] = b":heappages";
 pub const RPC_REQUEST_URL: &str = "http://localhost:9933";
 pub const TIMEOUT_PERIOD: u64 = 3_000; // in milli-seconds
 pub const JSON_STRING: &str = "{\"id\":1,\"jsonrpc\":\"2.0\",\"method\":\"chain_getFinalizedHead\",\"params\":[]}";
@@ -50,6 +50,10 @@ const EVENT_TOPIC_NAME: &[u8] = b"encrypted-extrinsic-sent";
 /// `KeyTypeId` from the keystore and use the ones it finds to sign the transaction.
 /// The keys can be inserted manually via RPC (see `author_insertKey`).
 pub const KEY_TYPE: KeyTypeId = KeyTypeId(*b"priv");
+
+// type EventIndex = u32;
+// #[derive(Deserialize, Encode, Decode, Default, RuntimeDebug)]
+// type EventRecordTuple = Vec<(frame_system::Config::BlockNumber, EventIndex)>;
 
 #[derive(Deserialize, Encode, Decode, Default, RuntimeDebug)]
 struct RpcResponse {
@@ -214,8 +218,10 @@ decl_module! {
 					if let Err(e) = finalized_block_events_result {
 						debug::error!("offchain_worker error: {:?}", e);
 					} else {
-						let finalized_block_events = finalized_block_events_result.ok().unwrap().result;
-						debug::info!("=================== finalized_events ================== {:?}", finalized_block_events);
+						let finalized_block_events_vec = finalized_block_events_result.ok().unwrap().result;
+						debug::info!("=================== finalized_events ================== {:?}", finalized_block_events_vec);
+						// let mut finalized_block_events_scale = &finalized_block_events_vec[..];
+						// debug::info!("=================== finalized_events_decoded ================== {:?}", Decode::decode::<Vec<(u64, u32)>>(&mut finalized_block_events_scale));
 					}
 				}
 
