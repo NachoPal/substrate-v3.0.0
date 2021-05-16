@@ -34,15 +34,6 @@ use sp_io::hashing::{twox_128, blake2_256, blake2_128};
 
 use serde_json::{Value};
 
-// use serde::{Deserialize, Deserializer, Serialize, Serializer};
-// use serde_json::json;
-// use sodiumoxide::crypto::box_::{Nonce};
-// pub const HEAP_PAGES: &'static [u8] = b":heappages";
-// pub const RPC_REQUEST_URL: &str = "http://localhost:9933";
-// pub const TIMEOUT_PERIOD: u64 = 3_000; // in milli-seconds
-// pub const JSON_STRING: &str = "{\"id\":1,\"jsonrpc\":\"2.0\",\"method\":\"chain_getFinalizedHead\",\"params\":[]}";
-// pub const JSONRPC: &str = "2.0";
-
 pub const RPC_REQUEST_URL: &str = "http://localhost:9933";
 pub const TIMEOUT_PERIOD: u64 = 3_000;
 pub const JSONRPC: &str = "2.0";
@@ -59,72 +50,6 @@ const EVENT_TOPIC_NAME: &[u8] = b"encrypted-extrinsic-sent";
 /// `KeyTypeId` from the keystore and use the ones it finds to sign the transaction.
 /// The keys can be inserted manually via RPC (see `author_insertKey`).
 pub const KEY_TYPE: KeyTypeId = KeyTypeId(*b"priv");
-
-// type EventIndex = u32;
-// #[derive(Deserialize, Encode, Decode, Default, RuntimeDebug)]
-// type EventRecordTuple = Vec<(frame_system::Config::BlockNumber, EventIndex)>;
-
-// #[derive(Deserialize, Encode, Decode, Default, RuntimeDebug)]
-// struct RpcResponse {
-// 	#[serde(deserialize_with = "de_string_to_bytes")]
-// 	jsonrpc: Vec<u8>,
-// 	#[serde(deserialize_with = "de_string_to_bytes")]
-// 	result: Vec<u8>,
-// 	id: u32
-// }
-
-// struct RpcRequest<'a> {
-// 	jsonrpc: &'a str,
-// 	id: u32,
-// 	method: &'a str,
-// 	params: Vec<&'a str>,
-// 	timeout: u64,
-// 	url: &'a str
-// }
-
-// // pub type EventIndex = u32;
-// // pub type BlockNumber = u32;
-
-// // #[derive(RuntimeDebug, Decode)]
-// // pub struct Topic<BlockNumber: HasCompact, EventIndex: HasCompact> {
-// // 	#[codec(compact)]
-// // 	block_number: BlockNumber,
-// // 	#[codec(compact)]
-// // 	event_index: EventIndex
-// // }
-
-// // #[derive(RuntimeDebug, Decode)]
-// // pub struct EventTopics {
-// // 	events: Vec<Topic<BlockNumber, EventIndex>>
-// // }
-
-// // struct RpcRequest {
-// // 	jsonrpc: &str,
-// // 	id: u32,
-// // 	method: &str,
-// // 	params: Vec<&str>,
-// // 	timeout: u64,
-// // 	url: &str
-// // }
-
-// pub fn de_string_to_bytes<'de, D>(de: D) -> Result<Vec<u8>, D::Error>
-// where
-// 	D: Deserializer<'de>,
-// {
-// 	let s: &str = Deserialize::deserialize(de)?;
-// 	Ok(s.as_bytes().to_vec())
-// }
-
-// pub fn se_bytes_to_string<S>(se: S) -> Result<&str, S::Error>
-// where
-// 	S: Serializer,
-// {
-// 	let d: &str = Serialize::serialize(se)?;
-// 	// str::from_utf8(se).unwrap()
-// 	Ok(d)
-// }
-
-// pub type RpcResponse = RpcResultStruct;
 
 pub mod ed25519 {
 	mod app_ed25519 {
@@ -197,30 +122,14 @@ decl_event! {
 decl_module! {
 	/// A public part of the pallet.
 	pub struct Module<T: Config> for enum Call where origin: T::Origin {
-
-		// pub struct EncryptedExtrinsicData<T> {
-		// 	pub seder: T::AccountId,
-		// 	pub channel: T::AuthorityId,
-		// 	pub nonce: Nonce,
-		// }
-
 		fn deposit_event() = default;
 
 		#[weight = (0, Pays::No)]
 		fn send_encrypted_extrinsic(origin, channel: T::AuthorityId, extrinsic: Data, nonce: Nonce) -> DispatchResultWithPostInfo {
 			let sender = ensure_signed(origin.clone())?;
 			Self::sender_belongs_to_channel(&sender, &channel)?;
-			// call.dispatch_bypass_filter(origin.clone());
-
-			// let module_name = b"PrivateChannels";
-
-			// let module_hash = twox_128(&module_name[..]);
-
-			// <EncryptedData>::put(data);
-			// <EncryptionNonce>::put(nonce);
 
 			let topic = T::Hashing::hash(EVENT_TOPIC_NAME);
-
 			let event = <T as Config>::Event::from(RawEvent::EncryptedExtrinsicSent(sender, channel, extrinsic, nonce));
 
 			<frame_system::Pallet<T>>::deposit_event_indexed(&[topic], event.into());
@@ -284,106 +193,10 @@ decl_module! {
 					},
 					Err(e) => debug::error!("Offchain_worker error chain_getFinalizedHead: {:?}", e)
 				}
-
-				// 	let finalized_block_hash_vec = finalized_head_result.ok().unwrap().result;
-				// 	let finalized_block_hash = str::from_utf8(&finalized_block_hash_vec[..]).unwrap();
-				// 	debug::info!("=================== finalized_block_hash ================== {:?}", finalized_block_hash);
-
-				// 	let finalized_block_events_result = Self::fetch_finalized_block_events(&finalized_block_hash);
-
-				// 	if let Err(e) = finalized_block_events_result {
-				// 		debug::error!("offchain_worker error 2: {:?}", e);
-				// 	} else {
-				// 		let finalized_block_events_vec = finalized_block_events_result.ok().unwrap().result;
-				// 		debug::info!("=================== finalized_events ================== {:?}", finalized_block_events_vec);
-				// 		let finalized_block_events_str = str::from_utf8(&finalized_block_events_vec[2..]).unwrap();
-				// 		debug::info!("=================== finalized_events_str ================== {:?}", finalized_block_events_str);
-				// 		// let finalized_block_events_str = &finalized_block_events_vec[..];
-				// 		// debug::info!("=================== finalized_events_str ================== {:?}", finalized_block_events_str);
-				// 		let mut finalized_block_events_bytes = hex::decode(finalized_block_events_str).ok().unwrap();
-				// 		debug::info!("=================== finalized_events_hex ================== {:?}", finalized_block_events_bytes);
-				// 		// debug::info!("=================== finalized_events_decoded ================== {:?}", EventTopics::decode(&mut &*finalized_block_events_bytes));
-				// 		debug::info!("=================== finalized_events_decoded ================== {:?}", <Vec<(u32, u32)>>::decode(&mut &*finalized_block_events_bytes));
-				// 	}
-				// }
-
-				// if let Err(e) = finalized_head_result {
-				// 	debug::error!("offchain_worker error: {:?}", e);
-				// } else {
-				// 	let finalized_block_hash_vec = finalized_head_result.ok().unwrap().result;
-				// 	let finalized_block_hash = str::from_utf8(&finalized_block_hash_vec[..]).unwrap();
-				// 	debug::info!("=================== finalized_block_hash ================== {:?}", finalized_block_hash);
-				// 	let finalized_block_events_result = Self::fetch_finalized_block_events(&finalized_block_hash);
-
-				// 	if let Err(e) = finalized_block_events_result {
-				// 		debug::error!("offchain_worker error: {:?}", e);
-				// 	} else {
-				// 		let finalized_block_events_vec = finalized_block_events_result.ok().unwrap().result;
-				// 		debug::info!("=================== finalized_events ================== {:?}", finalized_block_events_vec);
-				// 		let finalized_block_events_str = str::from_utf8(&finalized_block_events_vec[2..]).unwrap();
-				// 		debug::info!("=================== finalized_events_str ================== {:?}", finalized_block_events_str);
-
-
-				// 		// let finalized_block_events_str = &finalized_block_events_vec[..];
-				// 		// debug::info!("=================== finalized_events_str ================== {:?}", finalized_block_events_str);
-				// 		let mut finalized_block_events_bytes = hex::decode(finalized_block_events_str).ok().unwrap();
-				// 		debug::info!("=================== finalized_events_hex ================== {:?}", finalized_block_events_bytes);
-				// 		// debug::info!("=================== finalized_events_decoded ================== {:?}", EventTopics::decode(&mut &*finalized_block_events_bytes));
-				// 		debug::info!("=================== finalized_events_decoded ================== {:?}", <Vec<(u32, u32)>>::decode(&mut &*finalized_block_events_bytes));
-				// 	}
-				// }
-
-				// let param1 = b"hola".to_vec();
-				// let param2 = b"mundo".to_vec();
-				// let params = vec![param1, param2];
-				// let method = b"chain_getFinalizedHead".to_vec();
-				// let jsonrpc = b"2.0".to_vec();
-				// let id = 1;
-
-				// let param1 = str::from_utf8(b"hola").unwrap();
-				// let param2 = str::from_utf8(b"mundo").unwrap();
-				// let params = vec![param1, param2];
-				// let method = str::from_utf8(b"chain_getFinalizedHead").unwrap();
-				// let jsonrpc = str::from_utf8(b"2.0").unwrap();
-				// let id = 1;
-
-				// let param1 = "hola";
-				// let param2 = b"mundo";
-				// let params = vec![param1, param2];
-				// let method = b"chain_getFinalizedHead";
-				// let jsonrpc = b"2.0";
-				// let id = 1;
-
-				// jsonrpc: Vec<u8>, id: u32, method: Vec<u8>, params: Vec<Vec<u8>>
-
-				// Self::rpc_call(jsonrpc, id, method, params);
-
-
-
-				// debug::info!("=================== RESPONSE ================== {:?}", str::from_utf8(&finalized_block_hash).unwrap());
-
-
-				// 	.map_err(|_| http::Error::IoError)?;
-
-				// let response = pending.try_wait(deadline)
-				// 	.map_err(|_| http::Error::DeadlineReached)??;
-
-				// let owned_channels = Self::get_events_data_from_owned_channels();
-				// let owned_channels = Self::get_events_data_from_owned_channels();
-
-				// debug::info!("================ CHANNELS ==============: {:?}", owned_channels);
-				// Self::get_events_for_owned_channels(&owned_channels);
-				// let result = Self::decrypt_and_sign(block_number);
-				// if let Err(e) = result {
-				// 	debug::error!("offchain_worker error: {:?}", e);
-				// }
-				// Self::search_for_send_extrinsic_events(block_number);
 			}
 		}
 	}
 }
-
-//event: Event::private_channels(RawEvent::EncryptedExtrinsicSent
 
 impl<T: Config> Module<T> {
 	fn type_of<Z>(_: Z) -> &'static str {
@@ -458,141 +271,6 @@ impl<T: Config> Module<T> {
 	// 	let i = index as usize;
 	// 	let events = SystemPallet::<T>::events();
 	// 	debug::info!("============= EVENT ============== {:?}", events[i]);
-	// }
-
-	// fn rpc_call(request: RpcRequest) -> Result<RpcResponse, http::Error> {
-	// 	let request_body = json!({
-	// 		"jsonrpc": request.jsonrpc,
-	// 		"id": request.id,
-	// 		"method": request.method,
-	// 		"params": request.params
-	// 	});
-
-	// 	debug::info!("========================= BODY CONSTRUCT ==================== {:?}", serde_json::to_string(&request_body).unwrap());
-
-	// 	let mut body: Vec<&[u8]> = Vec::new();
-	// 	// let request_body_vec: Vec<u8> = serde_json::to_vec(&request_body).unwrap();
-	// 	let request_body_slice: &[u8] = &(serde_json::to_vec(&request_body).unwrap())[..];
-	// 	// let request_body_slice: &[u8] = &v[..];
-	// 	body.push(request_body_slice);
-
-	// 	let post_request = http::Request::post(request.url, body);
-
-	// 	let timeout = sp_io::offchain::timestamp().add(Duration::from_millis(TIMEOUT_PERIOD));
-
-	// 	let pending = post_request
-	// 		.add_header("Content-Type", "application/json;charset=utf-8")
-	// 		.deadline(timeout)
-	// 		.send().map_err(|_| http::Error::IoError)?;
-
-	// 	let response = pending.try_wait(timeout)
-	// 		.map_err(|_| http::Error::DeadlineReached)??;
-
-	// 	if response.code != 200 {
-	// 		debug::warn!("Unexpected status code: {}", response.code);
-	// 		return Err(http::Error::Unknown);
-	// 	}
-
-	// 	let response_body_bytes = response.body().collect::<Vec<u8>>();
-
-	// 	let response_body_str = str::from_utf8(&response_body_bytes).map_err(|_| http::Error::Unknown)?;
-
-	// 	debug::info!("=================== RESPONSE RAW ================== {:?}", response_body_str);
-
-
-	// 	let rpc_response: RpcResponse = serde_json::from_str(&response_body_str).map_err(|_| http::Error::Unknown)?;
-
-	// 	Ok(rpc_response)
-	// }
-
-	// fn fetch_finalized_block_hash() -> Result<Vec<u8>, http::Error> {
-	// 	let mut body: Vec<&'static [u8]> = Vec::new();
-	// 	body.push(FETCH_FINALIZED_BLOCK_HASH_BODY);
-
-	// 	let request = http::Request::post(HTTP_LOCAL_RPC_REQUEST, body);
-
-	// 	let timeout = sp_io::offchain::timestamp().add(Duration::from_millis(FETCH_TIMEOUT_PERIOD));
-
-	// 	let pending = request
-	// 		.add_header("Content-Type", "application/json;charset=utf-8")
-	// 		.deadline(timeout)
-	// 		.send().map_err(|_| http::Error::IoError)?;
-
-	// 	let response = pending.try_wait(timeout)
-	// 		.map_err(|_| http::Error::DeadlineReached)??;
-	// 	// Let's check the status code before we proceed to reading the response.
-	// 	if response.code != 200 {
-	// 		debug::warn!("Unexpected status code: {}", response.code);
-	// 		return Err(http::Error::Unknown);
-	// 	}
-
-	// 	let response_body_bytes = response.body().collect::<Vec<u8>>();
-
-	// 	let response_body_str = str::from_utf8(&response_body_bytes).map_err(|_| http::Error::Unknown)?;
-
-	// 	debug::info!("=================== RESPONSE RAW ================== {:?}", response_body_str);
-
-
-	// 	let rpc_response: RpcResponse = serde_json::from_str(&response_body_str).map_err(|_| http::Error::Unknown)?;
-
-	// 	Ok(rpc_response.result)
-	// }
-
-	// fn fetch_finalized_block_events(block_hash: &Vec<u8>) -> Result<(), http::Error> {
-	// 	debug::info!("=================== ENTRA ================== ");
-	// 	// let mut body: Vec<&'static [u8]> = Vec::new();
-	// 	// body.push(FETCH_FINALIZED_BLOCK_HASH_BODY);
-
-	// 	// let request = http::Request::post(HTTP_LOCAL_RPC_REQUEST, body);
-
-	// 	// let timeout = sp_io::offchain::timestamp().add(Duration::from_millis(FETCH_TIMEOUT_PERIOD));
-
-	// 	// let pending = request
-	// 	// 	.add_header("Content-Type", HTTP_HEADER_CONTENT_TYPE)
-	// 	// 	.deadline(timeout)
-	// 	// 	.send().map_err(|_| http::Error::IoError)?;
-
-	// 	// let response = pending.try_wait(timeout)
-	// 	// 	.map_err(|_| http::Error::DeadlineReached)??;
-	// 	// // Let's check the status code before we proceed to reading the response.
-	// 	// if response.code != 200 {
-	// 	// 	debug::warn!("Unexpected status code: {}", response.code);
-	// 	// 	return Err(http::Error::Unknown);
-	// 	// }
-
-	// 	// let response_body_bytes = response.body().collect::<Vec<u8>>();
-
-	// 	// let response_body_str = str::from_utf8(&response_body_bytes).map_err(|_| http::Error::Unknown)?;
-
-	// 	// debug::info!("=================== RESPONSE RAW ================== {:?}", response_body_str);
-
-
-	// 	// let rpc_response: RpcResponse = serde_json::from_str(&response_body_str).map_err(|_| http::Error::Unknown)?;
-
-	// 	// Ok(rpc_response.result)
-
-	// 	// storage::hashed::get_or(&blake2_256, &who.to_keyed_vec(NONCE_OF), 0)
-	// 	let module_key = twox_128(MODULE);
-	// 	let event_topic_storage_key = twox_128(EVENT_TOPIC_STORAGE);
-	// 	// let event_topic_storage_key = twox_128(EVENT_STORAGE);
-
-	// 	let event_topic_name = blake2_256(EVENT_TOPIC_NAME);
-	// 	let event_topic_hash = blake2_128(&event_topic_name);
-
-	// 	let private_channels_events_key = &[&module_key[..], &event_topic_storage_key[..], &event_topic_hash[..], &event_topic_name[..]].concat();
-
-	// 	// let a = str::from_utf8(&private_channels_events_key).unwrap();
-
-	// 	debug::info!("=================== EVENT TOPIC KEY ================== {:?}",hex::encode(&private_channels_events_key));
-
-	// 	// let params = format!("params\":[{}]", str::from_utf8(&block_hash).unwrap());
-
-	// 	// let a = FETCH_FINALIZED_BLOCK_EVENTS_BODY.extend_from_slice(params);
-	// 	// debug::info!("=================== URL ================== {:?}", &params);
-
-	// 	// let _events_key = &[&module_key[..], &event_topic_storage_key[..]].concat();
-
-	// 	Ok(())
 	// }
 
 	// fn get_events_data_from_owned_channels() -> Vec<EncryptedExtrinsicData<T>> {
